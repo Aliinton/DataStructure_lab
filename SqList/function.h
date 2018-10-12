@@ -3,6 +3,7 @@
 #include "SqList.h"
 #endif
 
+//为线性表增加内存空间
 status ListIncrese(SqList * L)
 {
     L->size += LISTINCREMENT;
@@ -77,8 +78,8 @@ status NewList(Mul_SqList *L)
         return OK;
 }
 
-//销毁当前处理的线性表
-status DestoryList(Mul_SqList *L, int k)
+//删除当前处理的线性表
+status DeleteList(Mul_SqList *L, int k)
 {
     if(!L)
         return INFEASIBLE;
@@ -90,6 +91,7 @@ status DestoryList(Mul_SqList *L, int k)
     return OK;
 }
 
+//清空线性表
 status ClearList(SqList *L)
 {
     if(!L)
@@ -98,6 +100,7 @@ status ClearList(SqList *L)
     return OK;
 }
 
+//判断线性表是否为空
 status ListEmpty(SqList L)
 {
     if(L.length)
@@ -106,11 +109,13 @@ status ListEmpty(SqList L)
         return TRUE;
 }
 
+//判断线性表长度
 int ListLength(SqList L)
 {
     return L.length;
 }
 
+//获得位置为元素
 status GetElem(SqList L, int i, ElemType *e)
 {
     if(i < 1 || i > L.length)
@@ -122,6 +127,7 @@ status GetElem(SqList L, int i, ElemType *e)
     return OK;
 }
 
+//定位满足关系compare的元素
 int LocateElem(SqList L, ElemType e, status (*compare) (ElemType, ElemType))
 {
     ElemType* p = L.elem;
@@ -143,6 +149,7 @@ status samevalue(ElemType i, ElemType j)
 }
 //the end of compare function
 
+//获得指定元素的前驱元素
 status PriorElem(SqList L, ElemType cur_e, ElemType * next_e)
 {
     if(L.elem[0] == cur_e)
@@ -167,6 +174,7 @@ status PriorElem(SqList L, ElemType cur_e, ElemType * next_e)
     }
 }
 
+//获得指定元素的后继元素
 status NextElem(SqList L, ElemType cur_e, ElemType * next_e)
 {
     if(L.elem[L.length - 1] == cur_e)
@@ -211,6 +219,7 @@ status ListInsert(SqList* L, int i, ElemType e)
     return OK;
 }
 
+//删除线性表指定位置的元素
 status ListDelete(SqList* L, int i, ElemType* e)
 {
     int k;
@@ -227,6 +236,7 @@ status ListDelete(SqList* L, int i, ElemType* e)
     return OK;
 }
 
+//按照visit方法遍历线性表
 status ListTraverse(SqList L, status (*visit) (ElemType e))
 {
     int i;

@@ -13,15 +13,16 @@ int main(){
         system("cls");	printf("\n\n");
         printf("      Menu for Linear Table On Sequence Structure \n");
         printf("-------------------------------------------------\n");
-        printf("    	  1. IntiaLists       7. LocateElem\n");
-        printf("    	  2. DestroyList     8. PriorElem\n");
-        printf("    	  3. ClearList       9. NextElem \n");
-        printf("    	  4. ListEmpty     10. ListInsert\n");
-        printf("    	  5. ListLength     11. ListDelete\n");
-        printf("    	  6. GetElem       12. ListTrabverse\n");
-        printf("          13. NewList      14.ShowAllLists\n");
-        printf("          15. ChangeList\n");
-        printf("          16. Go to document handling system\n");
+        printf("    	  1. InitialLists     11. NextElem\n");
+        printf("    	  2. DeleteList       12. ListInsert\n");
+        printf("          3. InitilalList     13. ListDelete\n");
+        printf("          4. DestroyList      14. ListTrabverse\n");
+        printf("    	  5. NewList          15. ClearList\n");
+        printf("    	  6. ShowAllLists     16.ListEmpty\n");
+        printf("    	  7. ChangeList       17. ListLength\n");
+        printf("    	  8. GetElem          18. Go to document handling system\n");
+        printf("          9. LocateElem\n");
+        printf("          10. PriorElem\n");
         printf("    	  0. Exit\n");
         printf("-------------------------------------------------\n");
         printf("    输入执行项[0~16]:");
@@ -45,11 +46,11 @@ int main(){
             getchar();getchar();
             break;
         case 2:
-            printf("\n----DestroyList\n");
-            if(DestoryList(&L, k - 1) == OK)
-                printf("销毁线性表成功！\n");
+            printf("\n----DeleteList\n");
+            if(DeleteList(&L, k - 1) == OK)
+                printf("删除线性表成功！\n");
             else
-                printf("销毁线性表失败！\n");
+                printf("删除线性表失败！\n");
             if(L.List_Num)
             {
                 printf("当前线性表已不可用，请切换到另一线性表\n");
@@ -66,27 +67,51 @@ int main(){
             getchar();getchar();
             break;
         case 3:
-            printf("\n----ClearList\n");
-            if(ClearList(&L.Lists[k - 1]) == OK)
-                printf("成功清空线性表！\n");
+            printf("\n----InitialList\n");
+            if(InitialList(&L.Lists[k - 1]) == OK)
+            {
+                printf("初始化线性表成功！\n");
+            }
             else
-                printf("清空失败！\n");
-            getchar();getchar();
-            break;
+            {
+                printf("初始化线性表失败！\n");
+            }
         case 4:
-            printf("\n----ListEmpty\n");
-            if(ListEmpty(L.Lists[k - 1]))
-                printf("线性表为空！\n");
-            else
-                printf("线性表非空！\n");
-            getchar();getchar();
-            break;
+            printf("\n----DestroyList\n");
+            if(DestroyList())
         case 5:
-            printf("\n----ListLength\n");
-            printf("线性表长度为%d！\n", ListLength(L.Lists[k - 1]));
+            printf("\n----NewList\n");
+            char ch;
+            if(NewList(&L) == OK)
+            {
+                printf("成功创建一个新的线性表，是否切换到这个新的线性表?\nY(YES) N(no)\n");
+                getchar();
+                ch = getchar();
+                if(ch == 'Y')
+                {
+                    k = L.List_Num;
+                    printf("已切换到线性表%s\n", L.Lists[k - 1].ListName);
+                }
+            }
+            else
+            {
+                printf("创建新的线性表失败！\n");
+            }
             getchar();getchar();
             break;
         case 6:
+            printf("\n----ShowAllLists\n");
+            int i14;
+            printf("共有%d个线性表\n现在正在处理第%d个线性表(%s)\n", L.List_Num, k, L.Lists[k - 1].ListName);
+            ShowAllLists(L);
+            getchar();getchar();
+            break;
+        case 7:
+            printf("\n----ChangeList\n");
+            ChangeList(L, &k);
+            getchar();getchar();
+            break;
+        case 8:
             printf("\n----GetElem\n");
             int i6;
             ElemType e6;
@@ -103,7 +128,7 @@ int main(){
             }
             getchar();getchar();
             break;
-        case 7:
+        case 9:
             printf("\n----LocateElem\n");
             ElemType e7;
             int loc, f;
@@ -133,7 +158,7 @@ int main(){
                 printf("未能找到满足关系的元素！\n");
             getchar();getchar();
             break;
-        case 8:
+        case 10:
             printf("\n----PriorElem\n");
             ElemType cur8, pre;
             printf("输入元素\n");
@@ -147,7 +172,7 @@ int main(){
                 printf("前驱元素不存在！¨\n");
             getchar();getchar();
             break;
-        case 9:
+        case 11:
             printf("\n----NextElem\n");
             ElemType cur9, next;
             printf("输入元素\n");
@@ -161,7 +186,7 @@ int main(){
                 printf("后继元素不存在！¨\n");
             getchar();getchar();
             break;
-        case 10:
+        case 12:
             printf("\n----ListInsert!\n");
             int i10;
             ElemType e10;
@@ -175,7 +200,7 @@ int main(){
                 printf("插入失败！\n");
             getchar();getchar();
             break;
-        case 11:
+        case 14:
             printf("\n----ListDelete\n");
             int i11;
             ElemType e11;
@@ -191,45 +216,34 @@ int main(){
                 printf("删除失败！\n");
             getchar();getchar();
             break;
-        case 12:
+        case 13:
             printf("\n----ListTrabverse!\n");
             if(!ListTraverse(L.Lists[k - 1], &getvalue))
             printf("遍历失败，或为空表\n");
             getchar();getchar();
             break;
-        case 13:
-            printf("\n----NewList\n");
-            char ch;
-            if(NewList(&L) == OK)
-            {
-                printf("成功创建一个新的线性表，是否切换到这个新的线性表?\nY(YES) N(no)\n");
-                getchar();
-                ch = getchar();
-                if(ch == 'Y')
-                {
-                    k = L.List_Num;
-                    printf("已切换到线性表%s\n", L.Lists[k - 1].ListName);
-                }
-            }
-            else
-            {
-                printf("创建新的线性表失败！\n");
-            }
-            getchar();getchar();
-            break;
         case 14:
-            printf("\n----ShowAllLists\n");
-            int i14;
-            printf("共有%d个线性表\n现在正在处理第%d个线性表(%s)\n", L.List_Num, k, L.Lists[k - 1].ListName);
-            ShowAllLists(L);
+            printf("\n----ClearList\n");
+            if(ClearList(&L.Lists[k - 1]) == OK)
+                printf("成功清空线性表！\n");
+            else
+                printf("清空失败！\n");
             getchar();getchar();
             break;
         case 15:
-            printf("\n----ChangeList\n");
-            ChangeList(L, &k);
+            printf("\n----ListEmpty\n");
+            if(ListEmpty(L.Lists[k - 1]))
+                printf("线性表为空！\n");
+            else
+                printf("线性表非空！\n");
             getchar();getchar();
             break;
         case 16:
+            printf("\n----ListLength\n");
+            printf("线性表长度为%d！\n", ListLength(L.Lists[k - 1]));
+            getchar();getchar();
+            break;
+        case 17:
             document_handling_system(L);
             getchar();getchar();
             break;
