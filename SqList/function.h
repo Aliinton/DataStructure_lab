@@ -1,7 +1,6 @@
 #ifndef _function_H_
 #define _function_H_
 #include "SqList.h"
-#endif
 
 //为线性表增加内存空间
 status ListIncrese(SqList * L)
@@ -9,7 +8,7 @@ status ListIncrese(SqList * L)
     L->size += LISTINCREMENT;
     if(!(L->elem = (ElemType *) realloc (L->elem, sizeof(ElemType) * (L->size))))
     {
-        printf("OVERFLOW\n");
+        perror("ERROR: ");
         return OVERFLOW;
     }
     return OK;
@@ -34,7 +33,7 @@ status InitialList(SqList *L)
         return INFEASIBLE;
     if(!(L->elem = (ElemType *) malloc (sizeof(ElemType) * LIST_INIT_SIZE)))
     {
-        printf("OVERFLOW\n");
+        perror("ERROR: ");
         return OVERFLOW;
     }
     L->size = LIST_INIT_SIZE;
@@ -42,6 +41,24 @@ status InitialList(SqList *L)
     printf("输入这个线性表的名字：");
     scanf("%s", L->ListName);
     return OK;
+}
+
+//销毁当前线性表
+status DestroyList(SqList *L)
+{
+    if(!L)
+    {
+        perror("ERROR: ");
+        return INFEASIBLE;
+    }
+    else
+    {
+        free(L->elem);
+        L->elem = NULL;
+        L->size = 0;
+        L->length = 0;
+        return OK;
+    }
 }
 
 //初始化线性表序列
@@ -52,7 +69,7 @@ status InitialLists(Mul_SqList *L)
     L->List_Num = 1;
     if(!(L->Lists = (SqList *) malloc (sizeof (SqList))))
     {
-        printf("OVERFLOW\n");
+        perror("ERROR: ");
         return OVERFLOW;
     }
     if(!(InitialList(L->Lists)))
@@ -69,7 +86,7 @@ status NewList(Mul_SqList *L)
     L->List_Num++;
     if(!(L->Lists = (SqList *) realloc (L->Lists, sizeof(SqList) * L->List_Num)))
     {
-        printf("OVERFLOW\n");
+        perror("ERROR: ");
         return OVERFLOW;
     }
     if(!InitialList(L->Lists + L->List_Num - 1))
@@ -152,6 +169,8 @@ status samevalue(ElemType i, ElemType j)
 //获得指定元素的前驱元素
 status PriorElem(SqList L, ElemType cur_e, ElemType * next_e)
 {
+    if(!L.elem)
+        return ERROR;
     if(L.elem[0] == cur_e)
     {
         printf("INFASIBLE(cur_e is the first element)\n");
@@ -279,3 +298,77 @@ void ChangeList(Mul_SqList L, int *k)
     *k = i;
     printf("已经切换到线性表%s\n", L.Lists[i - 1].ListName);
 }
+
+//储存现在所有的线性表
+void StoreFiles(Mul_SqList *L)
+{
+    FILE *fp;
+    char filename[60] = "D:/data_structure_lab/SqList/output_files/", name[30];
+    if(L)
+    {
+        printf("输入创建文件名：");
+        gets(name);
+        strcat(filename, name);
+        if(fp = fopen(filename, "wb"))
+        {
+            printf("创建文件成功\n");
+            fwrite(L, sizeof(Mul_SqList), 1, fp);
+            fwrite(L->Lists, sizeof(SqList), L->List_Num, fp);
+            for(int i = 0; i < L->List_Num; i++)
+            {
+                fwrite(L->Lists[i].elem, sizeof(ElemType), L->Lists[i].length, fp);
+            }
+        }
+        else
+        {
+            perror("fopen");
+            printf("储存失败\n");
+        }
+    }
+    else
+    {
+        printf("内存中没有可储存数据\n");
+    }
+    fclose(fp);
+}
+
+//加载指定文件中的所有线性表
+void LoadFiles(Mul_SqList * L)
+{
+    FILE *fp;
+    char flag;
+    char filename[60] = "D:/data_structure_lab/SqList/output_files/", name[30];
+    printf("直接加载会丢失所有未存储数据，按Y继续，按S保存当前数据后继续，按其余键退出\n");
+    flag = getchar();
+    getchar();
+    if(flag == 'S' || flag == 's' || flag == 'Y' || flag == 'y')
+    {
+        if(flag == 'S' || flag == 's')
+        {
+            StoreFiles(L);
+        }
+        printf("输入打开文件名：");
+        gets(name);
+        strcat(filename, name);
+        if(fp = fopen(filename, "rb"))
+        {
+            fread(L, sizeof(Mul_SqList), 1, fp);
+            L->Lists = (SqList *)malloc(sizeof(SqList) * L->List_Num);
+            fread(L->Lists, sizeof(SqList), L->List_Num, fp);
+            for(int i = 0; i < L->List_Num; i++)
+            {
+                L->Lists[i].elem = (ElemType *)malloc(sizeof(ElemType) * L->Lists[i].size);
+                fread(L->Lists[i].elem, sizeof(ElemType), L->Lists[i].length, fp);
+            }
+        }
+        else
+        {
+            printf("加载失败！\n");
+        }
+    }
+    else
+    {
+        printf("本次操作已被放弃\n");
+    }
+}
+#endif

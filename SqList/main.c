@@ -1,40 +1,30 @@
-#ifndef _main_H_
-#define _main_H_
 #include "function.h"
-#include "document_handling.h"
-#endif
+#include "SqList.h"
 
 int main(){
     Mul_SqList L;
 //k代表现在正在处理的线性表的序号
     int op = 1, k = 0;
+    char ch;
     while(op)
     {
         system("cls");	printf("\n\n");
         printf("      Menu for Linear Table On Sequence Structure \n");
         printf("-------------------------------------------------\n");
         printf("    	  1. InitialLists     11. NextElem\n");
-        printf("    	  2. DeleteList       12. ListInsert\n");
+        printf("    	  2. DeleteList       12. ListInsert\n"); 
         printf("          3. InitilalList     13. ListDelete\n");
         printf("          4. DestroyList      14. ListTrabverse\n");
         printf("    	  5. NewList          15. ClearList\n");
         printf("    	  6. ShowAllLists     16.ListEmpty\n");
         printf("    	  7. ChangeList       17. ListLength\n");
-        printf("    	  8. GetElem          18. Go to document handling system\n");
-        printf("          9. LocateElem\n");
+        printf("    	  8. GetElem          18. SaveFiles\n");
+        printf("          9. LocateElem       19. LoadFiles\n");
         printf("          10. PriorElem\n");
         printf("    	  0. Exit\n");
         printf("-------------------------------------------------\n");
         printf("    输入执行项[0~16]:");
-        do
-        {
-            scanf("%d",&op);   
-            if(op < 0 || op > 16)
-                printf("未能找到相应执行项，重新输入：");
-            else
-                break;
-        }
-        while(1);
+        scanf("%d", &op);
         switch(op){
         case 1:
             printf("\n----IntiaLists\n");
@@ -76,9 +66,20 @@ int main(){
             {
                 printf("初始化线性表失败！\n");
             }
+            getchar();getchar();
+            break;
         case 4:
             printf("\n----DestroyList\n");
-            if(DestroyList())
+            if(DestroyList(&L.Lists[k - 1]) == OK)
+            {
+                printf("成功销毁线性表！\n");
+            }
+            else
+            {
+                printf("销毁线性表失败！\n");
+            }
+            getchar();getchar();
+            break;
         case 5:
             printf("\n----NewList\n");
             char ch;
@@ -200,7 +201,7 @@ int main(){
                 printf("插入失败！\n");
             getchar();getchar();
             break;
-        case 14:
+        case 13:
             printf("\n----ListDelete\n");
             int i11;
             ElemType e11;
@@ -216,13 +217,13 @@ int main(){
                 printf("删除失败！\n");
             getchar();getchar();
             break;
-        case 13:
+        case 14:
             printf("\n----ListTrabverse!\n");
             if(!ListTraverse(L.Lists[k - 1], &getvalue))
             printf("遍历失败，或为空表\n");
             getchar();getchar();
             break;
-        case 14:
+        case 15:
             printf("\n----ClearList\n");
             if(ClearList(&L.Lists[k - 1]) == OK)
                 printf("成功清空线性表！\n");
@@ -230,7 +231,7 @@ int main(){
                 printf("清空失败！\n");
             getchar();getchar();
             break;
-        case 15:
+        case 16:
             printf("\n----ListEmpty\n");
             if(ListEmpty(L.Lists[k - 1]))
                 printf("线性表为空！\n");
@@ -238,17 +239,32 @@ int main(){
                 printf("线性表非空！\n");
             getchar();getchar();
             break;
-        case 16:
+        case 17:
             printf("\n----ListLength\n");
             printf("线性表长度为%d！\n", ListLength(L.Lists[k - 1]));
             getchar();getchar();
             break;
-        case 17:
-            document_handling_system(L);
-            getchar();getchar();
+        case 18:
+            printf("\n----StoreFiles\n");
+            getchar();
+            StoreFiles(&L);
+            getchar();
+            break;
+        case 19:
+            printf("\n----OpenFiles\n");
+            getchar();
+            LoadFiles(&L);
+            getchar();
             break;
         case 0:
+            printf("是否保存过当前数据，按Y保存当前数据\n");
+            getchar();
+            ch = getchar();
+            if(ch == 'Y' || ch == 'y');
+                StoreFiles(&L);
             break;
+        default:
+            printf("输入无效，请重新输入：");
         }
     }
     printf("欢迎下次使用本系统\n");
