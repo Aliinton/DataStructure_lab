@@ -17,7 +17,13 @@ status ListIncrese(SqList * L)
 //elemnt input and output begin
 void input(ElemType * e)
 {
-    scanf("%d", e);
+    char c;
+    while(!scanf("%d", e))
+    {
+        printf("输入数据不合法\n");
+        while ((c = getchar()) != EOF && c != '\n');
+    }
+    while ((c = getchar()) != EOF && c != '\n');
 }
 
 void print(ElemType e)
@@ -291,12 +297,22 @@ void ShowAllLists(Mul_SqList L)
 //切换当前处理的线性表
 void ChangeList(Mul_SqList L, int *k)
 {
+    char ch;
     int i;
     ShowAllLists(L);
     printf("输入想要切换的线性表的序号：");
-    scanf("%d", &i);
-    *k = i;
-    printf("已经切换到线性表%s\n", L.Lists[i - 1].ListName);
+    ch = getchar();
+    i = ch - '0';
+    while ((ch = getchar()) != EOF && ch != '\n');
+    if(i > 0 && i <= L.List_Num)
+    {
+        *k = i;
+        printf("已经切换到线性表%s\n", L.Lists[i - 1].ListName);
+    }
+    else
+    {
+        printf("您输入的数据不合法\n");
+    }
 }
 
 //储存现在所有的线性表
@@ -336,11 +352,10 @@ void StoreFiles(Mul_SqList *L)
 void LoadFiles(Mul_SqList * L)
 {
     FILE *fp;
-    char flag;
+    char flag, ch;
     char filename[60] = "D:/data_structure_lab/SqList/output_files/", name[30];
     printf("直接加载会丢失所有未存储数据，按Y继续，按S保存当前数据后继续，按其余键退出\n");
     flag = getchar();
-    getchar();
     if(flag == 'S' || flag == 's' || flag == 'Y' || flag == 'y')
     {
         if(flag == 'S' || flag == 's')
@@ -348,6 +363,7 @@ void LoadFiles(Mul_SqList * L)
             StoreFiles(L);
         }
         printf("输入打开文件名：");
+         while ((ch = getchar()) != EOF && ch != '\n');
         gets(name);
         strcat(filename, name);
         if(fp = fopen(filename, "rb"))

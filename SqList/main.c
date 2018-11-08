@@ -16,7 +16,7 @@ int main(){
         printf("          3. InitilalList     13. ListDelete\n");
         printf("          4. DestroyList      14. ListTrabverse\n");
         printf("    	  5. NewList          15. ClearList\n");
-        printf("    	  6. ShowAllLists     16.ListEmpty\n");
+        printf("    	  6. ShowAllLists     16. ListEmpty\n");
         printf("    	  7. ChangeList       17. ListLength\n");
         printf("    	  8. GetElem          18. SaveFiles\n");
         printf("          9. LocateElem       19. LoadFiles\n");
@@ -24,7 +24,12 @@ int main(){
         printf("    	  0. Exit\n");
         printf("-------------------------------------------------\n");
         printf("    输入执行项[0~16]:");
-        scanf("%d", &op);
+        while(!scanf("%d", &op))
+        {
+            printf("输入数据不合法\n");
+            while ((ch = getchar()) != EOF && ch != '\n');
+        }
+        while ((ch = getchar()) != EOF && ch != '\n');
         switch(op){
         case 1:
             printf("\n----IntiaLists\n");
@@ -86,8 +91,9 @@ int main(){
             if(NewList(&L) == OK)
             {
                 printf("成功创建一个新的线性表，是否切换到这个新的线性表?\nY(YES) N(no)\n");
-                getchar();
+                while ((ch = getchar()) != EOF && ch != '\n');
                 ch = getchar();
+                while ((ch = getchar()) != EOF && ch != '\n');
                 if(ch == 'Y')
                 {
                     k = L.List_Num;
@@ -102,7 +108,6 @@ int main(){
             break;
         case 6:
             printf("\n----ShowAllLists\n");
-            int i14;
             printf("共有%d个线性表\n现在正在处理第%d个线性表(%s)\n", L.List_Num, k, L.Lists[k - 1].ListName);
             ShowAllLists(L);
             getchar();getchar();
@@ -118,6 +123,7 @@ int main(){
             ElemType e6;
             printf("输入位置\n");
             scanf("%d", &i6);
+            while ((ch = getchar()) != EOF && ch != '\n');
             if(GetElem(L.Lists[k - 1], i6, &e6) == OK)
             {
                 printf("第%d个元素为:\n", i6);
@@ -125,7 +131,7 @@ int main(){
             }
             else
             {
-                printf("第%d个元素不存在\n", i6);
+                printf("您输入的数据不合法\n", i6);
             }
             getchar();getchar();
             break;
@@ -192,7 +198,12 @@ int main(){
             int i10;
             ElemType e10;
             printf("输入位置\n");
-            scanf("%d", &i10);
+            while(!scanf("%d", &i10))
+            {
+                printf("输入数据不合法\n");
+                while ((ch = getchar()) != EOF && ch != '\n');
+            }
+            while ((ch = getchar()) != EOF && ch != '\n');
             printf("输入元素\n");
             input(&e10);
             if(ListInsert(&L.Lists[k - 1], i10, e10) == OK)
@@ -206,7 +217,12 @@ int main(){
             int i11;
             ElemType e11;
             printf("输入位置\n");
-            scanf("%d", &i11);
+            while(!scanf("%d", &i11))
+            {
+                printf("输入不合法\n");
+                while ((ch = getchar()) != EOF && ch != '\n');
+            }
+            while ((ch = getchar()) != EOF && ch != '\n');
             if(ListDelete(&L.Lists[k - 1], i11, &e11) == OK)
             {
                 printf("删除元素：\n");
@@ -246,21 +262,19 @@ int main(){
             break;
         case 18:
             printf("\n----StoreFiles\n");
-            getchar();
             StoreFiles(&L);
             getchar();
             break;
         case 19:
             printf("\n----OpenFiles\n");
-            getchar();
             LoadFiles(&L);
+            ChangeList(L, &k);
             getchar();
             break;
         case 0:
-            printf("是否保存过当前数据，按Y保存当前数据\n");
-            getchar();
+            printf("是否保存过当前数据，按Y保存当前数据，其余键退出\n");
             ch = getchar();
-            if(ch == 'Y' || ch == 'y');
+            if(ch == 'Y' || ch == 'y')
                 StoreFiles(&L);
             break;
         default:
