@@ -2,7 +2,13 @@
 #define _function_H_
 #include "SqList.h"
 
-//为线性表增加内存空间
+/*
+* 函数名：ListIncrese
+* 形参列表：需要增加储存空间的线性表的地址
+* 用户输入：无
+* 返回参数：status（状态指示量）
+* 函数功能：为线性表增加内存空间
+*/
 status ListIncrese(SqList * L)
 {
     L->size += LISTINCREMENT;
@@ -14,7 +20,13 @@ status ListIncrese(SqList * L)
     return OK;
 }
 
-//elemnt input and output begin
+/*
+* 函数名称：input
+* 形参列表：待输入元素的地址
+* 用户输入：无
+* 返回参数：空
+* 函数功能：输入一个元素
+*/
 void input(ElemType * e)
 {
     char c;
@@ -26,13 +38,25 @@ void input(ElemType * e)
     while ((c = getchar()) != EOF && c != '\n');
 }
 
+/*
+* 函数名称：print
+* 形参列表：待打印元素
+* 用户输入：无
+* 返回参数：空
+* 函数功能：打印一个元素
+*/
 void print(ElemType e)
 {
     printf("%d\n", e);
 }
-//element input and output end
 
-//初始化一个线性表
+/*
+* 函数名称：InitailList
+* 形参列表：代初始化的线性表的地址
+* 返回参数：status（状态指示量）
+* 用户输入：线性表的名字
+* 函数功能：输入一个元素
+*/
 status InitialList(SqList *L)
 {
     if(!L)
@@ -49,7 +73,13 @@ status InitialList(SqList *L)
     return OK;
 }
 
-//销毁当前线性表
+/*
+* 函数名称：DestroyList
+* 形参列表：待销毁的线性表的地址
+* 用户输入：无
+* 返回参数：status（状态指示量）
+* 函数功能：销毁一个线性表
+*/
 status DestroyList(SqList *L)
 {
     if(!L)
@@ -67,7 +97,13 @@ status DestroyList(SqList *L)
     }
 }
 
-//初始化线性表序列
+/*
+* 函数名称：InitailListd
+* 形参列表：代初始化的线性表组的地址
+* 用户输入：无
+* 返回参数：status（状态指示量）
+* 函数功能：初始化一个线性表组
+*/
 status InitialLists(Mul_SqList *L)
 {
     if(!L)
@@ -84,12 +120,19 @@ status InitialLists(Mul_SqList *L)
         return OK;
 }
 
-//在线性表序列中创建一个新的线性表
+/*
+* 函数名称：NewList
+* 形参列表：线性表组的地址
+* 用户输入：空
+* 返回参数：status（状态指示量）
+* 函数功能：在线性表序列中创建一个新的线性表
+*/
 status NewList(Mul_SqList *L)
 {
     if(!L)
         return INFEASIBLE;
     L->List_Num++;
+//增加线性表组的空间
     if(!(L->Lists = (SqList *) realloc (L->Lists, sizeof(SqList) * L->List_Num)))
     {
         perror("ERROR: ");
@@ -101,7 +144,13 @@ status NewList(Mul_SqList *L)
         return OK;
 }
 
-//删除当前处理的线性表
+/*
+* 函数名称：NewList
+* 形参列表：线性表组的地址
+* 用户输入：无
+* 返回参数：status（状态指示量）
+* 函数功能：删除当前线性表
+*/
 status DeleteList(Mul_SqList *L, int k)
 {
     if(!L)
@@ -114,7 +163,13 @@ status DeleteList(Mul_SqList *L, int k)
     return OK;
 }
 
-//清空线性表
+/*
+* 函数名称：ClearList
+* 形参列表：待清空线性表的地址
+* 用户输入：无
+* 返回参数：status（状态指示量）
+* 函数功能：清空当前线性表
+*/
 status ClearList(SqList *L)
 {
     if(!L)
@@ -123,7 +178,13 @@ status ClearList(SqList *L)
     return OK;
 }
 
-//判断线性表是否为空
+/*
+* 函数名称：ListEmpty
+* 形参列表：待判断线性表
+* 用户输入：无
+* 返回参数：status（状态指示量）
+* 函数功能：判断线性表是否为空
+*/
 status ListEmpty(SqList L)
 {
     if(L.length)
@@ -132,13 +193,25 @@ status ListEmpty(SqList L)
         return TRUE;
 }
 
-//判断线性表长度
+/*
+* 函数名称：ListLength
+* 形参列表：待判断线性表
+* 用户输入：无
+* 返回参数：线性表长度
+* 函数功能：返回线性表长度
+*/
 int ListLength(SqList L)
 {
     return L.length;
 }
 
-//获得位置为元素
+/*
+* 函数名称：GetElem
+* 形参列表：指定线性表， 元素位置， 存放元素的位置
+* 用户输入：元素位置
+* 返回参数：status(状态指示量)
+* 函数功能：指定位置，取出元素
+*/
 status GetElem(SqList L, int i, ElemType *e)
 {
     if(i < 1 || i > L.length)
@@ -150,7 +223,13 @@ status GetElem(SqList L, int i, ElemType *e)
     return OK;
 }
 
-//定位满足关系compare的元素
+/*
+* 函数名称：LocateElem
+* 形参列表：指定线性表， 元素值
+* 用户输入：元素值
+* 返回参数：元素位置
+* 函数功能：定位元素
+*/
 int LocateElem(SqList L, ElemType e, status (*compare) (ElemType, ElemType))
 {
     ElemType* p = L.elem;
@@ -162,7 +241,12 @@ int LocateElem(SqList L, ElemType e, status (*compare) (ElemType, ElemType))
         return i;
 }
 
-//cmpare function
+/*
+* 函数名称：samevalue
+* 形参列表：待比较元素
+* 返回参数：status(状态指示量)
+* 函数功能：比较两个元素是否相等
+*/
 status samevalue(ElemType i, ElemType j)
 {
     if(i == j)
@@ -170,9 +254,15 @@ status samevalue(ElemType i, ElemType j)
     else
         return FALSE;
 }
-//the end of compare function
 
-//获得指定元素的前驱元素
+
+/*
+* 函数名称：PriorElem
+* 形参列表：指定线性表，元素值，用于存放元素的空间
+* 用户输入：元素值
+* 返回参数：status(状态指示量)
+* 函数功能：获得指定元素的前驱元素
+*/
 status PriorElem(SqList L, ElemType cur_e, ElemType * next_e)
 {
     if(!L.elem)
@@ -185,6 +275,7 @@ status PriorElem(SqList L, ElemType cur_e, ElemType * next_e)
     else
     {
         int i;
+//之后元素移位
         for(i = 1; i < L.length && L.elem[i] != cur_e; i++);
         if(i < L.length)
         {
@@ -199,7 +290,13 @@ status PriorElem(SqList L, ElemType cur_e, ElemType * next_e)
     }
 }
 
-//获得指定元素的后继元素
+/*
+* 函数名称：NextElem
+* 形参列表：指定线性表，元素值，用于存放后继元素的空间
+* 用户输入：元素值
+* 返回参数：status(状态指示量)
+* 函数功能：获得指定元素的后继元素
+*/
 status NextElem(SqList L, ElemType cur_e, ElemType * next_e)
 {
     if(L.elem[L.length - 1] == cur_e)
@@ -210,6 +307,7 @@ status NextElem(SqList L, ElemType cur_e, ElemType * next_e)
     else
     {
         int i;
+//之后元素移位
         for(i = 0; i < L.length - 1 && L.elem[i] != cur_e; i++);
         if(i < L.length - 1)
         {
@@ -224,7 +322,13 @@ status NextElem(SqList L, ElemType cur_e, ElemType * next_e)
     }
 }
 
-//在线性表第i个元素之前插入
+/*
+* 函数名称：ListInsert
+* 形参列表：指定线性表，元素位置，元素值
+* 用户输入：位置和元素
+* 返回参数：status(状态指示量)
+* 函数功能：在线性表第i个元素之前插入指定元素
+*/
 status ListInsert(SqList* L, int i, ElemType e)
 {
     if(!L)
@@ -236,6 +340,7 @@ status ListInsert(SqList* L, int i, ElemType e)
         if(ListIncrese(L) != OK)
             return OVERFLOW;
     L->length++;
+//之后元素移位
     for(; k >= i; k--)
     {
         L->elem[k] = L->elem[k - 1];
@@ -244,7 +349,13 @@ status ListInsert(SqList* L, int i, ElemType e)
     return OK;
 }
 
-//删除线性表指定位置的元素
+/*
+* 函数名称：ListDelete
+* 形参列表：指定线性表，元素值，用于存放元素的空间
+* 用户输入：删除元素位置
+* 返回参数：status(状态指示量)
+* 函数功能：删除线性表指定位置的元素
+*/
 status ListDelete(SqList* L, int i, ElemType* e)
 {
     int k;
@@ -261,7 +372,13 @@ status ListDelete(SqList* L, int i, ElemType* e)
     return OK;
 }
 
-//按照visit方法遍历线性表
+/*
+* 函数名称：ListTraverse
+* 形参列表：指定线性表
+* 用户输入：无
+* 返回参数：status(状态指示量)
+* 函数功能：遍历线性表
+*/
 status ListTraverse(SqList L, status (*visit) (ElemType e))
 {
     int i;
@@ -283,7 +400,12 @@ status getvalue(ElemType e)
 }
 //visit function end
 
-//打印所有的线性表序号及其名称
+/*
+* 函数名称：ShowAllLists
+* 形参列表：指定线性表组
+* 返回参数：status(状态指示量)
+* 函数功能：展示所有线性表
+*/
 void ShowAllLists(Mul_SqList L)
 {
     int i;
@@ -294,7 +416,12 @@ void ShowAllLists(Mul_SqList L)
     }
 }
 
-//切换当前处理的线性表
+/*
+* 函数名称：ChangeList
+* 形参列表：指定线性表组
+* 返回参数：空
+* 函数功能：切换当前处理的线性表
+*/
 void ChangeList(Mul_SqList L, int *k)
 {
     char ch;
@@ -315,7 +442,13 @@ void ChangeList(Mul_SqList L, int *k)
     }
 }
 
-//储存现在所有的线性表
+/*
+* 函数名称：StoreFiles
+* 形参列表：指定线性表组
+* 返回参数：空
+* 用户输入：待储存文件的名字
+* 函数功能：储存当前内存中的线性表
+*/
 void StoreFiles(Mul_SqList *L)
 {
     FILE *fp;
@@ -328,8 +461,10 @@ void StoreFiles(Mul_SqList *L)
         if(fp = fopen(filename, "wb"))
         {
             printf("创建文件成功\n");
+//把记录线性表组的数据录入
             fwrite(L, sizeof(Mul_SqList), 1, fp);
             fwrite(L->Lists, sizeof(SqList), L->List_Num, fp);
+//把每个线性表的数据录入
             for(int i = 0; i < L->List_Num; i++)
             {
                 fwrite(L->Lists[i].elem, sizeof(ElemType), L->Lists[i].length, fp);
@@ -348,8 +483,14 @@ void StoreFiles(Mul_SqList *L)
     fclose(fp);
 }
 
-//加载指定文件中的所有线性表
-void LoadFiles(Mul_SqList * L)
+/*
+* 函数名称：LoadFiels
+* 形参列表：指定线性表组
+* 返回参数：status（状态指示量）
+* 用户输入：待打开文件名称
+* 函数功能：加载指定文件中的线性表组
+*/
+status LoadFiles(Mul_SqList * L)
 {
     FILE *fp;
     char flag, ch;
@@ -363,28 +504,60 @@ void LoadFiles(Mul_SqList * L)
             StoreFiles(L);
         }
         printf("输入打开文件名：");
-         while ((ch = getchar()) != EOF && ch != '\n');
+        while ((ch = getchar()) != EOF && ch != '\n');
         gets(name);
         strcat(filename, name);
         if(fp = fopen(filename, "rb"))
         {
+//加载线性表组
             fread(L, sizeof(Mul_SqList), 1, fp);
             L->Lists = (SqList *)malloc(sizeof(SqList) * L->List_Num);
             fread(L->Lists, sizeof(SqList), L->List_Num, fp);
+//恢复每个线性表中的元素
             for(int i = 0; i < L->List_Num; i++)
             {
                 L->Lists[i].elem = (ElemType *)malloc(sizeof(ElemType) * L->Lists[i].size);
                 fread(L->Lists[i].elem, sizeof(ElemType), L->Lists[i].length, fp);
             }
+            return OK;
         }
         else
         {
             printf("加载失败！\n");
+            return ERROR;
         }
     }
     else
     {
         printf("本次操作已被放弃\n");
+        return ERROR;
+    }
+}
+
+/*
+* 函数名称：ChangeList
+* 形参列表：空
+* 用户输入：待删除文件名称
+* 返回参数：status（状态指示符）
+* 函数功能：删除指定文件
+*/
+status DeleteFiles()
+{
+    FILE *fp;
+    char flag, ch;
+    char filename[60] = "D:/data_structure_lab/SqList/output_files/", name[30];
+    printf("输入待删除文件名称\n");
+    gets(name);
+    strcat(filename, name);
+    if(remove(filename) == 0)
+    {
+        printf("已删除 %s。\n", filename);
+        return OK;
+    }
+    else
+    {
+        perror("remove");
+        return ERROR;
     }
 }
 #endif

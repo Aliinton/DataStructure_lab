@@ -4,7 +4,7 @@
 int main(){
     Mul_SqList L;
 //k代表现在正在处理的线性表的序号
-    int op = 1, k = 0;
+    int op = 1, k = 0, runonce = 1;
     char ch;
     while(op)
     {
@@ -20,7 +20,7 @@ int main(){
         printf("    	  7. ChangeList       17. ListLength\n");
         printf("    	  8. GetElem          18. SaveFiles\n");
         printf("          9. LocateElem       19. LoadFiles\n");
-        printf("          10. PriorElem\n");
+        printf("          10. PriorElem       20. DeleteFiles\n");
         printf("    	  0. Exit\n");
         printf("-------------------------------------------------\n");
         printf("    输入执行项[0~16]:");
@@ -30,6 +30,20 @@ int main(){
             while ((ch = getchar()) != EOF && ch != '\n');
         }
         while ((ch = getchar()) != EOF && ch != '\n');
+//确保用户只能在内存中有线性表组的情况下继续操作
+        if(runonce)
+        { 
+            if(op == 1 || op == 19)
+            {
+                runonce = 0;
+            }
+            else
+            {
+                printf("首次进入系统需要导入或创建一个线性表组否则无法进行后续操作\n");
+                getchar();
+                continue;
+            }
+        }
         switch(op){
         case 1:
             printf("\n----IntiaLists\n");
@@ -90,6 +104,7 @@ int main(){
             char ch;
             if(NewList(&L) == OK)
             {
+//提供新建后直接切换的功能
                 printf("成功创建一个新的线性表，是否切换到这个新的线性表?\nY(YES) N(no)\n");
                 while ((ch = getchar()) != EOF && ch != '\n');
                 ch = getchar();
@@ -143,7 +158,7 @@ int main(){
             fun[0] = &samevalue;
             printf("输入元素\n");
             input(&e7);
-            printf("      Menu for compare function\n");
+            /*printf("      Menu for compare function\n");
             printf("-------------------------------------------------\n");
             printf("          1.same value\n");
             printf("-------------------------------------------------\n");
@@ -157,8 +172,8 @@ int main(){
                 else
                     break;
             }
-            while(1);
-            loc = LocateElem(L.Lists[k - 1], e7, fun[f - 1]);
+            while(1);*/
+            loc = LocateElem(L.Lists[k - 1], e7, fun[0]);
             if(loc)
                 printf("满足关系的元素位置为%d!\n", loc);
             else
@@ -267,8 +282,14 @@ int main(){
             break;
         case 19:
             printf("\n----OpenFiles\n");
-            LoadFiles(&L);
-            ChangeList(L, &k);
+//如果加载成功选择一个表操作
+            if(LoadFiles(&L) == OK)
+                ChangeList(L, &k);
+            getchar();
+            break;
+        case 20:
+            printf("DeleteFiles\n");
+            DeleteFiles();
             getchar();
             break;
         case 0:
