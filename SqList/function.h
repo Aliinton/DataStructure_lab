@@ -452,7 +452,7 @@ void ChangeList(Mul_SqList L, int *k)
 void StoreFiles(Mul_SqList *L)
 {
     FILE *fp;
-    char filename[60] = "D:/data_structure_lab/SqList/output_files/", name[30];
+    char filename[60] = "./SqList/output_files/", name[30];
     if(L)
     {
         printf("输入创建文件名：");
@@ -494,7 +494,7 @@ status LoadFiles(Mul_SqList * L)
 {
     FILE *fp;
     char flag, ch;
-    char filename[60] = "D:/data_structure_lab/SqList/output_files/", name[30];
+    char filename[60] = "./SqList/output_files/", name[30];
     printf("直接加载会丢失所有未存储数据，按Y继续，按S保存当前数据后继续，按其余键退出\n");
     flag = getchar();
     if(flag == 'S' || flag == 's' || flag == 'Y' || flag == 'y')
@@ -545,7 +545,7 @@ status DeleteFiles()
 {
     FILE *fp;
     char flag, ch;
-    char filename[60] = "D:/data_structure_lab/SqList/output_files/", name[30];
+    char filename[60] = "./SqList/output_files/", name[30];
     printf("输入待删除文件名称\n");
     gets(name);
     strcat(filename, name);

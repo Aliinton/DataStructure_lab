@@ -23,7 +23,7 @@ int main(){
         printf("          10. PriorElem       20. DeleteFiles\n");
         printf("    	  0. Exit\n");
         printf("-------------------------------------------------\n");
-        printf("    输入执行项[0~16]:");
+        printf("    输入执行项[0~20]:");
         while(!scanf("%d", &op))
         {
             printf("输入数据不合法\n");
