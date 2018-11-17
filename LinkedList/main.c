@@ -22,7 +22,7 @@ int main()
         printf("    	  7. ChangeList       17. ListLength\n");
         printf("    	  8. GetElem          18. SaveFiles\n");
         printf("          9. LocateElem       19. LoadFiles\n");
-        printf("          10. PriorElem       20. DeleteFiles\n");
+        printf("          10. PriorElem");
         printf("    	  0. Exit\n");
         printf("-------------------------------------------------\n");
         printf("    输入执行项[0~20]:");
@@ -41,7 +41,7 @@ int main()
             }
             else
             {
-                printf("首次进入系统需要导入或创建一个线性表组否则无法进行后续操作\n");
+                printf("进入系统需要创建或导入一个线性表组否则无法进行后续操作\n");
                 getchar();
                 continue;
             }
@@ -222,6 +222,37 @@ int main()
                 printf("当前处理链表长度为：%d\n", i);
             }
             getchar();
+            break;
+        case 18:
+            printf("----SaveFile\n");
+            s = SaveFile(&L);
+            if(s == OK)
+            {
+                printf("保存成功\n");
+            }
+            else
+            {
+                printf("保存失败\n");
+            }
+            getchar();
+            break;
+        case 19:
+            printf("----LoadFile\n");
+            s = LoadFiles(&L);
+            if(s == OK)
+                printf("加载成功\n");
+            else
+                printf("加载失败或操作被放弃\n");
+            getchar();
+            break;
+        case 0:
+            printf("----exit\n");
+            printf("请确认是否保存内存中链表组(按Y或y保存，其余键退出)\n");
+            ch = getchar();
+            if(ch == 'Y' || ch == 'y')
+            {
+                SaveFile(&L);
+            }
             break;
         default:
             printf("输入无效，请重新输入：");

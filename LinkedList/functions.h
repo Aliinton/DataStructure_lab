@@ -11,6 +11,19 @@ ListNode * LocateList(Mul_List *L, int k);
 status NewList(Mul_List *L);
 void ShowAllLists(Mul_List L);
 void ChangeList(Mul_List *L);
+status GetElem(Mul_List * L, int i, ElemType *e);
+int LocateElem(Mul_List *L, ElemType e, int (*compare)(ElemType i, ElemType j));
+int SameValue(ElemType i, ElemType j);
+status PriorElem(Mul_List * L, ElemType t, ElemType* e);
+status NextElem(Mul_List *L, ElemType t, ElemType *e);
+status ListInsert(Mul_List* L, int i, ElemType e);
+status ListDelete(Mul_List *L, int i, ElemType *e);
+void ListTraverse(Mul_List *L, void (*visit)(ElemType i));
+status ClearList(Mul_List *L);
+status ListEmpty(Mul_List *L);
+int ListLength(Mul_List * L);
+status SaveFile(Mul_List *L);
+status LoadFiles(Mul_List * L);
 
 /**
  * 函数名：InitialLists
@@ -126,9 +139,11 @@ status DeleteList(Mul_List* L, int k)
  */
 status DestoryList(Mul_List* L, int k)
 {
+    ClearList(L);
     ListNode *l = LocateList(L, k);
     if(l)
     {
+        free(l->head);
         l->head = NULL;
         printf("成功销毁线性表：%s\n", l->name);
         return OK;
@@ -541,5 +556,136 @@ int ListLength(Mul_List * L)
         return -1;
     }
     return l->data;
+}
+
+/**
+ * 函数名：SaveFile
+ * 参数：链表组指针
+ * 返回值：储存成功返回OK，失败返回ERROR
+ * 将内存中的链表组保存到文件中
+ */
+status SaveFile(Mul_List *L)
+{
+    FILE *fp;
+//用于记录这个链表是否还存在
+    int flag;
+    char name[30], filename[]={"./"};
+    ListNode *l = L->head->next;
+    LinkedList n;
+    printf("保存为（输入文件名）：");
+    gets(name);
+    strcat(filename, name);
+    if(fp = fopen(filename, "wb"))
+    {
+        printf("创建文件成功\n");
+//首先保存链表组
+        fwrite(L, sizeof(Mul_List), 1, fp);
+        while(l)
+        {
+//把每个链表节点保存起来
+            fwrite(l, sizeof(ListNode), 1, fp);
+//把每个链表中的数据保存起来
+            n = l->head;
+            if(n)
+            {
+//代表这个链表没有被销毁
+                flag = 1;
+            }
+            else
+            {
+//代表这个链表已经被销毁
+                flag = 0;
+            }
+            fwrite(&flag, sizeof(int), 1, fp);
+            if(flag)
+            {
+                printf("%d\t", n->data);
+                while(n)
+                {
+                    fwrite(n, sizeof(Node), 1, fp);
+                    n = n->next;
+                }
+            }
+            l = l->next;
+        }     
+        fclose(fp);
+        return OK;      
+    }
+    else
+    {
+        perror("fopen\n");
+        return ERROR;
+    }
+}
+
+/**
+ * 函数名：LoadFiles
+ * 参数名：链表组指针
+ * 返回值：加载成功返回OK，失败ERROR
+ * 从指定文件中加载链表组到内存
+ */
+status LoadFiles(Mul_List * L)
+{
+    FILE *fp;
+    char name[30], flag, ch, filename[] = {"./"};
+    int d, num;
+    printf("直接加载会丢失所有未存储数据，按Y继续，按S保存当前数据后继续，按其余键退出\n");
+    flag = getchar();
+    if(flag == 'S' || flag == 's' || flag == 'Y' || flag == 'y')
+    {
+        if(flag == 'S' || flag == 's')
+        {
+            SaveFile(L);
+        }
+        printf("输入打开文件名：");
+        while ((ch = getchar()) != EOF && ch != '\n');
+        gets(name);
+        strcat(filename, name);
+        if(fp = fopen(filename, "rb"))
+        {
+            fread(L, sizeof(Mul_List), 1, fp);
+            L->head = (ListNode*)malloc(sizeof(ListNode));
+            ListNode* l = L->head;
+            for(int i = 1; i <= L->num; i++)
+            {
+                l->next = (ListNode *)malloc(sizeof(ListNode));
+                l = l->next;
+                fread(l, sizeof(ListNode), 1, fp);
+                fread(&d, sizeof(int), 1, fp);
+                if(d)
+                {
+                    LinkedList n, r;
+                    n = (LinkedList)malloc(sizeof(Node));
+                    fread(n, sizeof(Node), 1, fp);
+                    l->head = r = n;
+                    num = n->data;
+                    for(int k = 1; k <= num; k++)
+                    {
+                        n = (LinkedList)malloc(sizeof(Node));
+                        fread(n, sizeof(Node), 1, fp);
+                        r->next = n;
+                        r = r->next;
+                    }
+                }
+                else
+                {
+                    l->head = NULL;
+                }
+            }
+            fclose(fp);
+            ChangeList(L);
+            return OK;
+        }
+        else
+        {
+            perror("fopen");
+            return ERROR;
+        }
+    }
+    else
+    {
+        printf("操作被放弃\n");
+        return ERROR;
+    }
 }
 #endif
