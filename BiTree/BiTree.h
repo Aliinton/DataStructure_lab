@@ -63,4 +63,10 @@ typedef struct
     int loc;
 }Mul_BiTree;
 
+//keysetµÄ¶¨Òå
+typedef struct
+{
+    char ** keys;
+    int num;
+}keyset;
 #endif

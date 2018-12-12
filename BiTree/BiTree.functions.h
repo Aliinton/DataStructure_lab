@@ -2,6 +2,9 @@
 #define _H_functions_
 #include "BiTree.h"
 //函数声明
+int judge(Defination *df);
+int judge2(BiTree n, BiTree t);
+void keySet(BiTree t, keyset *set);
 void InitForest(Mul_BiTree * forest);
 BiTree isDestory(Mul_BiTree *forest);
 status InitBiTree(Mul_BiTree *forest);
@@ -14,6 +17,7 @@ void CreateBiTree(BiTree *t, defination df, int *loc, int n);
 void PreOrderTraverse(BiTree t);
 void InOrderTraverse(BiTree t);
 void PostOrderTraverse(BiTree t);
+void LevelOrderTraverse(BiTree t);
 status BiTreeEmpty(Mul_BiTree *forest);
 BiTree Value(BiTree t, char * key);
 BiTree Root(BiTree t);
@@ -24,10 +28,13 @@ BiTree RightChild(BiTree t, char *key);
 BiTree LeftSibling(BiTree t, char *key);
 BiTree RightSibling(BiTree t, char *key);
 status NewTree(Mul_BiTree *forest);
+status DeleteChild(BiTree t, char *key, int d);
 void ChangeTree(Mul_BiTree *forest);
 void DeleteTree(Mul_BiTree *forest);
 void showTree(BiTree t, int level);
 void Showforest(Mul_BiTree *forest);
+void SaveTree(FILE *fp, BiTree t);
+void LoadTree(FILE *fp, BiTree *t);
 /**
  * 函数名：judge
  * 参数：Defination指针
@@ -46,6 +53,49 @@ int judge(Defination *df)
         return 1;
     else
         return 0;
+}
+
+/**
+ * 函数名：judge2
+ * 参数：树根节点，树根节点
+ * 返回值：合法返回1，非法返回0
+ * 功能：判断两树之间是否有交集
+ */
+int judge2(BiTree n, BiTree t)
+{
+    keyset keyset1, keyset2;
+    keyset1.num = keyset2.num = 0;
+    keyset1.keys = keyset2.keys = NULL;
+    keySet(n, &keyset1);
+    keySet(t, &keyset2);
+    for(int i = 0; i < keyset1.num; i++)
+    {
+        for(int j = 0; j < keyset2.num; j++)
+        {
+            if(!strcmp(keyset1.keys[i], keyset2.keys[j]))
+                return 1;
+        }
+    }
+    return 0;
+}
+
+/**
+ * 函数名：keySet
+ * 参数：树根节点，储存key值的数组地址
+ * 返回值：void
+ * 功能：获取一颗树中的所有key
+ */
+void keySet(BiTree t, keyset *set)
+{
+    if(t)
+    {
+        set->num++;
+        set->keys = (char **)realloc(set->keys, sizeof(char *) * set->num);
+        set->keys[set->num - 1] = (char *)malloc(sizeof(char) * 10);
+        strcpy(set->keys[set->num - 1], t->key);
+        keySet(t->lchild, set);
+        keySet(t->rchild, set);
+    }
 }
 
 /**
@@ -348,6 +398,34 @@ void PostOrderTraverse(BiTree t)
     }
 }
 
+/**
+ * 函数名：LevelOrderTraverse
+ * 参数：树根节点
+ * 返回值：空
+ * 功能：按层遍历
+ */
+void LevelOrderTraverse(BiTree t)
+{
+    BiTree queue[10], n;
+    int front = 0, rear = 0;
+    queue[rear++] = t;
+    while(front != rear)
+    {
+        n = queue[front++];
+        getBiTNode(n);
+        front %= 10;
+        if(n->lchild)
+        {
+            queue[rear++] = n->lchild;
+            rear %= 10;
+        }
+        if(n->rchild)
+        {
+            queue[rear++] = n->rchild;
+            rear %= 10;
+        }
+    }
+}
 /**
  * 函数名：Root
  * 参数：森林地址
@@ -673,8 +751,123 @@ void showTree(BiTree t, int level)
     else
     {
         printf("%s-%d\n", t->key, t->value);
-        showTree(t->lchild, level + 4);
         showTree(t->rchild, level + 4);
+        showTree(t->lchild, level + 4);
+    }
+}
+
+/**
+ * 函数名：DeleteChild
+ * 参数：树根节点，关键字，左右指示符
+ * 返回值：status
+ * 功能：删除指定节点左或右子树
+ */
+status DeleteChild(BiTree t, char *key, int d)
+{
+    t = Value(t, key);
+    if(!t)
+    {
+        printf("没有对应key值\n");
+        return ERROR;
+    }
+    if(d == 0)
+    {
+        if(t->lchild)
+        {
+            clear(&(t->lchild));
+            return OK;
+        }
+        else
+        {
+            printf("该节点没有左子树\n");
+            return ERROR;
+        }
+    }
+    else
+    {
+        if(t->rchild)
+        {
+            clear(&(t->rchild));
+            return OK;
+        }
+        else
+        {
+            printf("该节点没有右子树\n");
+            return ERROR;
+        }
+    }
+}
+
+/**
+ * 函数名：InsertChild
+ * 参数：树根节点，key值，左右指示符，子树根节点
+ * 返回值：插入成功返回OK，失败返回ERROR
+ * 功能；插入子树
+ */
+status InsertChild(BiTree t, char *key, int d, BiTree n)
+{
+    t = Value(t, key);
+    if(!t)
+    {
+        printf("未找到对应插入点\n");
+        return ERROR;
+    }
+    if(d == 0)
+    {
+        n->rchild = t->lchild;
+        t->lchild = n;
+    }
+    else
+    {
+        n->rchild = t->rchild;
+        t->rchild = n;
+    }
+    return OK;
+}
+
+/**
+ * 函数名：SaveTree
+ * 参数：文件指针，树根节点
+ * 返回值：空
+ * 功能：保存一颗树
+ */
+void SaveTree(FILE *fp, BiTree t)
+{
+    if(t)
+    {
+        int i = 1;
+        fwrite(&i, sizeof(int), 1, fp);
+        fwrite(t, sizeof(BiTNode), 1, fp);
+        SaveTree(fp, t->lchild);
+        SaveTree(fp, t->rchild);
+    }
+    else
+    {
+        int i = 0;
+        fwrite(&i, sizeof(int), 1, fp);
+    }
+}
+
+/**
+ * 函数名：LoadTree
+ * 参数：文件指针，树根节点
+ * 返回值：空
+ * 功能：从文件中恢复树的结构
+ */
+void LoadTree(FILE *fp, BiTree *t)
+{
+    int i;
+    fread(&i, sizeof(int), 1, fp);
+    if(i)
+    {
+        *t = (BiTree)malloc(sizeof(BiTNode));
+        fread(*t, sizeof(BiTNode), 1, fp);
+        LoadTree(fp, &((*t)->lchild));
+        LoadTree(fp, &((*t)->rchild));
+    }
+    else
+    {
+        *t = NULL;
     }
 }
 #endif

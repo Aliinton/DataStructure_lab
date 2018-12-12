@@ -4,8 +4,9 @@ int main()
 {
 //储存现在正在处理的森林
     Mul_BiTree forest;
-    BiTree t;
+    BiTree t, n;
     Defination df;
+    FILE *fp;
     char key[10];
     ValueType v;
     InitForest(&forest);
@@ -344,6 +345,107 @@ int main()
             }
             getchar();
             break;
+        case 15:
+            printf("----InsertChild\n");
+            t = isDestory(&forest);
+            if(t)
+            {
+                if(t->lchild)
+                {
+                    printf("创建待插入子树，右子树需为空\n");
+                    df = setdefination();
+                    if(judge(&df))
+                    {
+                        loc = 0;
+                        CreateBiTree(&n, df.df, &loc, df.n);
+                        if(loc != df.n)
+                        {
+                            printf("子树创建失败\n");
+                        }
+                        else if(n->rchild != NULL)
+                        {
+                            printf("右子树必须为空\n");
+                        }
+                        else if(judge2(n, t->lchild))
+                        {
+                            printf("存在关键字冲突，操作非法\n");
+                        }
+                        else
+                        {
+                            printf("子树创建成功\n");
+                            printf("输入key：");
+                            scanf("%s", key);
+                            while ((ch = getchar()) != EOF && ch != '\n');
+                            printf("插入到左子树输入0，右子树输入1\n");
+                            scanf("%d", &d);
+                            while(d != 1 && d!= 0)
+                            {
+                                printf("非法输入，重新输入：");
+                                scanf("%d", &d);
+                            }
+                            while ((ch = getchar()) != EOF && ch != '\n');
+                            s = InsertChild(t->lchild, key, d, n);
+                            if(s == OK)
+                            {
+                                printf("插入成功\n");
+                            }
+                            else
+                            {
+                                printf("插入失败\n");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        printf("子树创建失败\n");
+                    }
+                }
+                else
+                {
+                    printf("空树\n");
+                }
+            }
+            else
+            {
+                printf("树已被销毁，操作失败\n");
+            }
+            getchar();
+            break;
+        case 16:
+            printf("----DeleteChild\n");
+            t = isDestory(&forest);
+            if(t)
+            {
+                if(t->lchild)
+                {
+                    printf("输入key：");
+                    scanf("%s", key);
+                    while ((ch = getchar()) != EOF && ch != '\n');
+                    printf("删除左子树输入0，右子树输入1\n");
+                    scanf("%d", &d);
+                    while(d != 1 && d!= 0)
+                    {
+                        printf("非法输入，重新输入：");
+                        scanf("%d", &d);
+                    }
+                    s = DeleteChild(t->lchild, key, d);
+                    while ((ch = getchar()) != EOF && ch != '\n');
+                    if(s == OK)
+                        printf("删除成功\n");
+                    else
+                        printf("删除失败\n");
+                }
+                else
+                {
+                    printf("空树\n");
+                }
+            }
+            else
+            {
+                printf("操作失败\n");
+            }
+            getchar();
+            break;    
         case 17:
             printf("----PreOrderTraverse\n");
             t = isDestory(&forest);
@@ -384,7 +486,21 @@ int main()
             getchar();
             break;
         case 20:
-            printf("----");
+            printf("----LevelOrderTraverse\n");
+            t = isDestory(&forest);
+            if(t)
+            {
+                if(t->lchild)
+                {
+                    LevelOrderTraverse(t->lchild);
+                }
+                else
+                {
+                    printf("空树\n");
+                }
+            }
+            getchar();
+            break;
         case 21:
             printf("----Showforest\n");
             Showforest(&forest);
@@ -414,7 +530,62 @@ int main()
             getchar();
             break;
         case 25:
-            printf("");
+            printf("----SaveTree\n");
+            char filename[] = {"./"}, name[30];
+            printf("输入文件名\n");
+            gets(name);
+            strcat(filename, name);
+            fp = fopen(filename, "wb");
+            if(fp)
+            {
+                t = isDestory(&forest);
+                if(t)
+                {
+                    SaveTree(fp, t->lchild);
+                    printf("树%s已储存\n", t->key);
+                }
+                else
+                {
+                    printf("操作失败\n");
+                }
+            }
+            else
+            {
+                perror("fopen");
+                printf("文件创建失败\n");
+            }
+            fclose(fp);
+            getchar();
+            break;
+        case 26:
+            printf("----LoadTree\n");
+            char filename1[] = {"./"}, name1[30];
+            printf("输入文件名\n");
+            gets(name1);
+            strcat(filename1, name1);
+            fp = fopen(filename1, "rb");
+            if(fp)
+            {
+                t = isDestory(&forest);
+                if(t)
+                {
+                    clear(&(t->lchild));
+                    LoadTree(fp, &(t->lchild));
+                    printf("文件内容已成功加载到树%s\n", t->key);
+                }
+                else
+                {
+                    printf("操作失败\n");
+                }
+            }
+            else
+            {
+                perror("fopen");
+                printf("文件读取失败\n");
+            }
+            fclose(fp);
+            getchar();
+            break;
         case 0:
             printf("欢迎下次使用本系统\n");
             getchar();
