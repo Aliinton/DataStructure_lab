@@ -22,6 +22,14 @@ VexType * firstAdjvex(AdjGraph *gp, char * key);
 VexType * nextAdjvex(AdjGraph *gp, char *key1, char* key2);
 status putVex(AdjGraph *gp, char *key);
 VexType * getVex1(AdjGraph *gp, char * key);
+void LocateVex(AdjGraph *gp, char *key);
+status saveGraph(AdjGraph *gp);
+status loadGraph(AdjGraph **gp);
+void DFS(AdjGraph *gp, int start);
+void DFSTraversal(AdjGraph *gp);
+int notFinish(AdjGraph *gp);
+void BFSTraversal(AdjGraph *gp);
+void BFS(AdjGraph *gp, int start);
 
 //调试用函数
 void printGraph(Graphs *g)
@@ -85,6 +93,7 @@ void initailGraph(Graphs *g)
     g->graphs[g->loc - 1] = (AdjGraph *)malloc(sizeof(AdjGraph));
     g->graphs[g->loc - 1]->arcclist = NULL;
     g->graphs[g->loc - 1]->arcnum = g->graphs[g->loc - 1]->vexnum = 0;
+    g->graphs[g->loc - 1]->name[0] = '\0';
 }
 
 /**
@@ -515,10 +524,214 @@ void LocateVex(AdjGraph *gp, char *key)
         }
     }
 }
+
+/**
+ * name: saveGraph
+ * param: Graph adress
+ * return: status(success return OK, fail return ERROR)
+ * function: save a graph into the file
+ */
+status saveGraph(AdjGraph *gp)
+{
+    FILE *fp;
+    ArcNode *arcp;
+    char filename[] = {"./"}, name[20];
+    int loc;
+    gets(name);
+    strcat(filename, name);
+    if(!(fp = fopen(filename, "wb")))
+    {
+        perror("fopen");
+        return ERROR;
+    }
+    fwrite(gp, sizeof(AdjGraph), 1, fp);
+    for(int i = 0; i < gp->vexnum; i++)
+    {
+        fwrite(&(gp->arcclist[i]), sizeof(VNode), 1, fp);
+        arcp = gp->arcclist[i].firstarc->nextarc;
+        while(arcp)
+        {
+            loc = arcp->adjvex;
+            fwrite(&loc, sizeof(int), 1, fp);
+            arcp = arcp->nextarc;
+        }
+        loc = -1;
+        fwrite(&loc, sizeof(int), 1, fp);
+    }
+    fclose(fp);
+    return OK;
+}
+
+/**
+ * name: loadGraph
+ * param: Graph adress
+ * return: status(success return OK, fail return ERROR)
+ * function: load a graph from the file
+ */
+status loadGraph(AdjGraph **gp)
+{
+    FILE *fp;
+    ArcNode *head, *pre, *n;
+    char filename[] = "./", name[20];
+    int loc;
+    gets(name);
+    strcat(filename, name);
+    if(!(fp = fopen(filename, "rb")))
+    {
+        perror("fopen");
+        return ERROR;
+    }
+    *gp = (AdjGraph *)malloc(sizeof(AdjGraph));
+    fread(*gp, sizeof(AdjGraph), 1, fp);
+    (*gp)->arcclist = (VNode *)malloc(sizeof(VNode) * (*gp)->vexnum);
+    for(int i = 0; i < (*gp)->vexnum; i++)
+    {
+        fread(&((*gp)->arcclist[i]), sizeof(VNode), 1, fp);
+        n = (ArcNode *)malloc(sizeof(ArcNode));
+        head = pre = n;
+        fread(&loc, sizeof(int), 1, fp);
+        while(loc != -1)
+        {
+            n = (ArcNode *)malloc(sizeof(ArcNode));
+            n->adjvex = loc;
+            pre->nextarc = n;
+            pre = n;
+            fread(&loc, sizeof(int), 1, fp);
+        }
+        pre->nextarc = NULL;
+        (*gp)->arcclist[i].firstarc = head;
+    }
+    fclose(fp);
+    return OK;
+}
+
 /**
  * name: BFS
  * param: Graph adress
  * return: void
- *
+ * function: BFS
  */
+void DFS(AdjGraph *gp, int start)
+{
+    int stack[100], top = 0, loc;
+    ArcNode *arcp;
+    stack[top++] = start;
+    printf("%s\t", gp->arcclist[start].data.key);
+    gp->arcclist[start].mark = TRUE;
+    while(top)
+    {
+        loc = stack[top - 1];
+        arcp = gp->arcclist[loc].firstarc->nextarc;
+        while(arcp && gp->arcclist[arcp->adjvex].mark == TRUE)
+            arcp = arcp->nextarc;
+        if(arcp)
+        {
+            stack[top++] = arcp->adjvex;
+            printf("%s\t", gp->arcclist[arcp->adjvex].data.key);
+            gp->arcclist[arcp->adjvex].mark = TRUE;
+        }
+        else
+            top--;
+    }
+}
+
+/**
+ * name: notFinish
+ * param: Grpah adress
+ * return: finish -1, not finish return the not visit vex index
+ * function: judge whether all the vex in graph is visited
+ */
+int notFinish(AdjGraph *gp)
+{
+    for(int i = 0; i < gp->vexnum; i++)
+    {
+        if(gp->arcclist[i].mark == FALSE)
+            return i;
+    }
+    return -1;
+}
+/**
+ * name: BFSTraversal
+ * param: Graph adress
+ * return: void
+ * function: BFS
+ */
+void DFSTraversal(AdjGraph *gp)
+{
+    char key[10], ch;
+    int loc;
+    printf("输入起点节点：");
+    scanf("%s", key);
+    while ((ch = getchar()) != EOF && ch != '\n');
+    for(int i = 0; i < gp->vexnum; i++)
+        gp->arcclist[i].mark = FALSE;
+    if(getIndex(gp, key) != -1)
+    {
+        DFS(gp, getIndex(gp, key));
+        while(loc = notFinish(gp), loc != -1)
+            DFS(gp, loc);
+    }
+    else
+    {
+        printf("非法输入\n");
+    }
+}
+
+/**
+ * name: BFSTraversal
+ * param: Graph adress
+ * return: void
+ * function: BFS
+ */
+void BFSTraversal(AdjGraph *gp)
+{
+    char key[10], ch;
+    int loc;
+    printf("输入起点节点：");
+    scanf("%s", key);
+    while ((ch = getchar()) != EOF && ch != '\n');
+    for(int i = 0; i < gp->vexnum; i++)
+        gp->arcclist[i].mark = FALSE;
+    if(getIndex(gp, key) != -1)
+    {
+        BFS(gp, getIndex(gp, key));
+        while(loc = notFinish(gp), loc != -1)
+            BFS(gp, loc);
+    }
+    else
+    {
+        printf("非法输入\n");
+    }
+}
+
+/**
+ * name: BFS
+ * param: Graph adress
+ * return: void
+ * function: BFS
+ */
+void BFS(AdjGraph *gp, int start)
+{
+    ArcNode *arcp;
+    int queue[100], rear = 0, front = 0, loc;
+    queue[rear++] = start;
+    printf("%s\t", gp->arcclist[start].data.key);
+    gp->arcclist[start].mark = TRUE;
+    while(rear != front)
+    {
+        loc = queue[front++];
+        arcp = gp->arcclist[loc].firstarc->nextarc;
+        while(arcp)
+        {
+            if(gp->arcclist[arcp->adjvex].mark == FALSE)
+            {
+                printf("%s\t", gp->arcclist[arcp->adjvex].data.key);
+                gp->arcclist[arcp->adjvex].mark = TRUE;
+                queue[rear++] = arcp->adjvex;
+                rear %= 100;
+            }
+            arcp = arcp->nextarc;
+        }
+    }
+}
 #endif

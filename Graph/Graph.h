@@ -26,6 +26,7 @@ typedef struct
 {
     VexType data;
     ArcNode *firstarc;
+    status mark;
 }VNode;
 
 //邻接表的定义

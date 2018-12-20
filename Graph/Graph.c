@@ -25,6 +25,7 @@ int main()
         printf("13.BFSTraverse      14.InitialGraph\n");
         printf("15.NewGraph         16.DeleteGraph\n");
         printf("17.ChangeGraph      18.ShowAllGraph\n");
+        printf("19.SaveGraph        20.LoadGraph\n");
         printf("0.exit\n");
         printf("-----------------------------------\n");
         printf("输入你的操作：");
@@ -36,7 +37,7 @@ int main()
         while ((ch = getchar()) != EOF && ch != '\n');
         if(runonce)
         {
-            if(op != 1)
+            if(op != 1 && op != 14 && op != 20)
             {
                 printf("请先建立一个图再进行后续操作\n");
                 getchar();
@@ -292,7 +293,7 @@ int main()
             g = isDestroy(&G);
             if(g)
             {
-
+                DFSTraversal(g);
             }
             else
             {
@@ -305,7 +306,7 @@ int main()
             g = isDestroy(&G);
             if(g)
             {
-                
+                BFSTraversal(g);
             }
             else
             {
@@ -315,17 +316,8 @@ int main()
             break;
         case 14:
             printf("InitialGraph\n");
-            g = isDestroy(&G);
-            if(g)
-            {
-                destroyGraph(&(G.graphs[G.loc - 1]));
-                initailGraph(&G);
-                printf("初始化成功\n");
-            }
-            else
-            {
-                printf("图已销毁，操作失败\n");
-            }
+            initailGraph(&G);
+            printf("初始化成功\n");
             getchar();
             break;
         case 15:
@@ -353,12 +345,44 @@ int main()
             printGraph(&G);
             getchar();
             break;
+        case 19:
+            printf("----SaveGraph\n");
+            g = isDestroy(&G);
+            if(g)
+            {
+                if(saveGraph(g) == OK)
+                    printf("储存成功\n");
+                else
+                    printf("储存失败\n");
+            }
+            else
+            {
+                printf("图已销毁，操作失败\n");
+            }
+            getchar();
+            break;
+        case 20:
+            printf("----LoadGraph\n");
+            g = isDestroy(&G);
+            if(g)
+            {
+                if(loadGraph(&(G.graphs[G.loc - 1])) == OK)
+                    printf("加载成功\n");
+                else
+                    printf("加载失败\n");
+            }
+            else
+            {
+                printf("图已销毁，操作失败\n");
+            }
+            getchar();
+            break;
+
         case 0:
             printf("欢迎下次使用\n");
             getchar();
         default:
             printf("非法输入，请重新输入：");
         }
-        
     }
 }
